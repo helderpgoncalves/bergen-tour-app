@@ -8,11 +8,24 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { Video, AVPlaybackStatus } from "expo-av";
-
-export default function DetailsScreen() {
+import { Video } from "expo-av";
+export default function DetailsScreen({ navigation, route }) {
   const video = React.useRef(null);
+  const { locale, marker } = route.params;
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: marker ? marker.title : "Details",
+      headerStyle: {
+        headerTitleStyle: {
+          fontFamily: "Gilroy",
+        },
+      },
+    });
+  }, [navigation, marker]);
+
   const [status, setStatus] = React.useState({});
+
   return (
     <View style={styles.container}>
       <Video
@@ -39,6 +52,7 @@ export default function DetailsScreen() {
       <View style={styles.text}>
         <Text
           style={{
+            fontFamily: "Gilroy",
             color: "#36489E",
             textAlign: "justify",
             marginStart: 20,
@@ -54,6 +68,7 @@ export default function DetailsScreen() {
         </Text>
         <Text
           style={{
+            fontFamily: "Gilroy",
             textAlign: "justify",
             marginStart: 20,
             marginEnd: 20,
@@ -73,13 +88,16 @@ export default function DetailsScreen() {
             style={{ width: 51, height: 51 }}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={require("../assets/home.png")}
             style={{ width: 51, height: 51 }}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{ marginEnd: "15%" }}>
+        <TouchableOpacity
+          style={{ marginEnd: "15%" }}
+          onPress={() => navigation.navigate("Map")}
+        >
           <Image
             source={require("../assets/right.png")}
             style={{ width: 51, height: 51 }}

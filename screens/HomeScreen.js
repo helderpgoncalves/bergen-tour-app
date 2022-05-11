@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MapView from "react-native-maps";
+const { Marker, Callout } = MapView;
 import {
   StyleSheet,
   Text,
@@ -7,17 +8,20 @@ import {
   Dimensions,
   Alert,
   TouchableOpacity,
+  Image,
 } from "react-native";
-import German from "./../assets/flags/German";
-import Spanish from "./../assets/flags/Spanish";
-import French from "./../assets/flags/French";
-import Norwegian from "./../assets/flags/Norwegian";
-import Chinese from "./../assets/flags/Chinese";
-import * as Location from "expo-location";
+import * as Localization from "expo-location";
+import i18n from "i18n-js";
+import languages from "../data/locales";
+import markers from "../data/markers";
 
 export default function HomeScreen({ navigation }) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [locale, setLocale] = useState(Localization.locale);
+  i18n.locale = locale;
+  i18n.fallbacks = true;
+  i18n.translations = languages;
 
   React.useEffect(() => {
     (async () => {
@@ -34,13 +38,6 @@ export default function HomeScreen({ navigation }) {
     })();
   }, []);
 
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    Alert.alert(location.coords.latitude.toString());
-  }
-
   const openPrivacyPolicy = () => {
     Alert.alert(
       "Privacy Policy",
@@ -56,99 +53,39 @@ export default function HomeScreen({ navigation }) {
   };
 
   const changeLanguage = (language) => {
-    Alert.alert("Language", `You have selected ${language}`);
+    setLocale(language);
   };
-
-  const [markers, setMarkers] = React.useState([
-    {
-      coordinate: {
-        latitude: 60.39453,
-        longitude: 5.32506,
-      },
-      title: "Marker 1",
-      description: "This is the first marker",
-    },
-    {
-      coordinate: {
-        latitude: 60.39468,
-        longitude: 5.32336,
-      },
-      title: "Marker 2",
-      description: "This is the second marker",
-    },
-    {
-      coordinate: {
-        latitude: 60.39558,
-        longitude: 5.32577,
-      },
-      title: "Marker 3",
-      description: "This is the third marker",
-    },
-    {
-      coordinate: {
-        latitude: 60.39705,
-        longitude: 5.32334,
-      },
-      title: "Marker 4",
-      description: "This is the fourth marker",
-    },
-    {
-      coordinate: {
-        latitude: 60.3975,
-        longitude: 5.32455,
-      },
-      title: "Marker 5",
-      description: "This is the fifth marker",
-    },
-    {
-      coordinate: {
-        latitude: 60.3987,
-        longitude: 5.32325,
-      },
-      title: "Marker 6",
-      description: "This is the sixth marker",
-    },
-    {
-      coordinate: {
-        latitude: 60.39629,
-        longitude: 5.32836,
-      },
-      title: "Marker 7",
-      description: "This is the seventh marker",
-    },
-  ]);
-
-  const [region, setRegion] = React.useState({
-    latitude: 60.39453,
-    longitude: 5.32506,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  });
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => changeLanguage("german")}>
-          <German />
+        <TouchableOpacity onPress={() => changeLanguage("de")}>
+          <Image source={require("../assets/flags/de.png")} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("spanish")}>
-          <Spanish />
+        <TouchableOpacity onPress={() => changeLanguage("es")}>
+          <Image source={require("../assets/flags/es.png")} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("french")}>
-          <French />
+        <TouchableOpacity onPress={() => changeLanguage("fr")}>
+          <Image source={require("../assets/flags/fr.png")} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("Norwegian")}>
-          <Norwegian />
+        <TouchableOpacity onPress={() => changeLanguage("no")}>
+          <Image source={require("../assets/flags/no.png")} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("Chinese")}>
-          <Chinese />
+        <TouchableOpacity onPress={() => changeLanguage("ch")}>
+          <Image source={require("../assets/flags/ch.png")} />
         </TouchableOpacity>
       </View>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Details")}
+        onPress={() =>
+          navigation.navigate("Details", {
+            location: location,
+          })
+        }
       >
-        <Text style={{ color: "white", fontSize: 24 }}>Start the Tour</Text>
+        <Text style={{ color: "white", fontSize: 24, fontFamily: "Gilroy" }}>
+          {i18n.t("startTour")}
+        </Text>
       </TouchableOpacity>
       <MapView
         showsUserLocation
@@ -157,25 +94,30 @@ export default function HomeScreen({ navigation }) {
         showsMyLocationButton
       >
         {markers.map((marker, index) => (
-          <MapView.Marker
-            key={index}
+          <Marker
+            key={marker.index}
             coordinate={marker.coordinate}
             title={marker.title}
             description={marker.description}
           >
-            <MapView.Callout>
-              <TouchableOpacity onPress={() => navigation.navigate("Details")}>
-                <Text>{marker.title}</Text>
-              </TouchableOpacity>
-            </MapView.Callout>
-          </MapView.Marker>
+            <Callout
+              onPress={() =>
+                navigation.navigate("Details", {
+                  locale: locale,
+                  marker: marker,
+                })
+              }
+            >
+              <Text>{marker.title}</Text>
+            </Callout>
+          </Marker>
         ))}
       </MapView>
       <TouchableOpacity onPress={() => openTermsOfService()}>
-        <Text style={styles.termsOfService}>Terms of service</Text>
+        <Text style={styles.termsOfService}>{i18n.t("termsOfService")}</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => openPrivacyPolicy()}>
-        <Text style={styles.privacyPolicy}>Privacy Policy</Text>
+        <Text style={styles.privacyPolicy}>{i18n.t("privacyPolicy")}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -197,6 +139,8 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
   },
   button: {
+    borderColor: "#000",
+    botderWidth: 3,
     backgroundColor: "#36489e",
     borderRadius: 5,
     padding: 10,
@@ -205,19 +149,28 @@ const styles = StyleSheet.create({
   },
   termsOfService: {
     width: Dimensions.get("window").width,
-    fontSize: 12,
+    fontSize: 14,
     color: "#36489e",
     textAlign: "right",
+    fontWeight: "700",
     marginTop: 50,
+    fontFamily: "Gilroy",
     marginRight: 18,
   },
   privacyPolicy: {
     width: Dimensions.get("window").width,
-    fontSize: 12,
+    fontSize: 14,
     color: "#36489e",
+    fontWeight: "700",
     textAlign: "right",
     marginTop: 10,
+    fontFamily: "Gilroy",
     marginRight: 18,
+  },
+  locationButtonCallout: {
+    borderRadius: 0,
+    opacity: 0.8,
+    backgroundColor: "lightgrey",
   },
   map: {
     top: 30,
