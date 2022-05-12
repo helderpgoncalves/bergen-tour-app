@@ -60,18 +60,33 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => changeLanguage("de")}>
-          <Image source={require("../assets/flags/de.png")} />
+          <Image
+            style={styles.image}
+            source={require("../assets/flags/de.png")}
+          />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("es")}>
+        <TouchableOpacity
+          style={styles.image}
+          onPress={() => changeLanguage("es")}
+        >
           <Image source={require("../assets/flags/es.png")} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("fr")}>
+        <TouchableOpacity
+          style={styles.image}
+          onPress={() => changeLanguage("fr")}
+        >
           <Image source={require("../assets/flags/fr.png")} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("no")}>
+        <TouchableOpacity
+          style={styles.image}
+          onPress={() => changeLanguage("no")}
+        >
           <Image source={require("../assets/flags/no.png")} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeLanguage("ch")}>
+        <TouchableOpacity
+          style={styles.image}
+          onPress={() => changeLanguage("ch")}
+        >
           <Image source={require("../assets/flags/ch.png")} />
         </TouchableOpacity>
       </View>
@@ -89,7 +104,12 @@ export default function HomeScreen({ navigation }) {
       </TouchableOpacity>
       <MapView
         showsUserLocation
-        region={location}
+        initialRegion={{
+          latitude: location ? location.coordinates.latitude : 60.3975,
+          longitude: location ? location.coordinates.longitude : 5.32455,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
         style={styles.map}
         showsMyLocationButton
       >
@@ -130,6 +150,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  image: {
+    overflow: "hidden",
+    borderColor: "#FF5757",
+    borderWidth: 1,
+    borderRadius: 150 / 2,
+  },
   header: {
     marginTop: "10%",
     alignContent: "center",
@@ -139,11 +165,13 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
   },
   button: {
-    borderColor: "#000",
-    botderWidth: 3,
+    overflow: "hidden",
+    borderColor: "#FF5757",
+    borderWidth: 1,
     backgroundColor: "#36489e",
     borderRadius: 5,
     padding: 10,
+    zIndex: -1,
     width: Dimensions.get("window").width - 100,
     alignItems: "center",
   },
@@ -152,7 +180,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#36489e",
     textAlign: "right",
-    fontWeight: "700",
     marginTop: 50,
     fontFamily: "Gilroy",
     marginRight: 18,
@@ -161,7 +188,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     fontSize: 14,
     color: "#36489e",
-    fontWeight: "700",
     textAlign: "right",
     marginTop: 10,
     fontFamily: "Gilroy",

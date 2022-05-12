@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Video } from "expo-av";
+import MapView from "react-native-maps";
 export default function DetailsScreen({ navigation, route }) {
   const video = React.useRef(null);
   const { locale, marker } = route.params;
@@ -25,6 +26,7 @@ export default function DetailsScreen({ navigation, route }) {
   }, [navigation, marker]);
 
   const [status, setStatus] = React.useState({});
+  const [location, setLocation] = React.useState(null);
 
   return (
     <View style={styles.container}>
@@ -39,16 +41,6 @@ export default function DetailsScreen({ navigation, route }) {
         isLooping
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
-      <View style={styles.buttons}>
-        <Button
-          title={status.isPlaying ? "Pause" : "Play"}
-          onPress={() =>
-            status.isPlaying
-              ? video.current.pauseAsync()
-              : video.current.playAsync()
-          }
-        />
-      </View>
       <View style={styles.text}>
         <Text
           style={{
@@ -85,13 +77,13 @@ export default function DetailsScreen({ navigation, route }) {
         <TouchableOpacity style={{ marginStart: "15%" }}>
           <Image
             source={require("../assets/left.png")}
-            style={{ width: 51, height: 51 }}
+            style={{ width: 41, height: 41 }}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={require("../assets/home.png")}
-            style={{ width: 51, height: 51 }}
+            style={{ width: 41, height: 41 }}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -100,9 +92,34 @@ export default function DetailsScreen({ navigation, route }) {
         >
           <Image
             source={require("../assets/right.png")}
-            style={{ width: 51, height: 51 }}
+            style={{ width: 41, height: 41 }}
           />
         </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          justifyContent: "center",
+          alignContent: "center",
+          alignItems: "center",
+          alignSelf: "center",
+          margin: 10,
+          borderWidth: 1,
+          overflow: "hidden",
+          width: "70%",
+          borderRadius: 10,
+          borderColor: "#FF5757",
+          zIndex: -1,
+        }}
+      >
+        <MapView
+          style={{ width: "100%", height: 60, borderRadius: 10 }}
+          initialRegion={{
+            latitude: marker ? marker.coordinate.latitude : 60.3975,
+            longitude: marker ? marker.coordinate.longitude : 5.32455,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
+          }}
+        />
       </View>
     </View>
   );
