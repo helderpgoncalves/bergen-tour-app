@@ -7,7 +7,6 @@ import useFonts from "./assets/fonts/useFonts";
 import AppLoading from "expo-app-loading";
 import MapScreen from "./screens/MapScreen";
 import { Image, TouchableOpacity } from "react-native";
-import TestScreen from "./screens/TestScreen";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -30,13 +29,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Test"
-          component={TestScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
         <Stack.Screen
           name="Home"
           component={HomeScreen}

@@ -8,9 +8,10 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { Video } from "expo-av";
+import { Video, Audio } from "expo-av";
 import markers from "../data/markers";
 import MapView from "react-native-maps";
+import Swiper from "../components/Swiper";
 export default function DetailsScreen({ navigation, route }) {
   const video = React.useRef(null);
   const { locale, marker } = route.params;
@@ -37,6 +38,32 @@ export default function DetailsScreen({ navigation, route }) {
     }
   };
 
+  const [sound, setSound] = React.useState();
+
+  async function playSound() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      marker.descriptions[0].audio
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={playSound}>
+          <Image
+            source={require("../assets/audio_icon.png")}
+            style={{ marginLeft: 10, width: 40, height: 40 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   React.useEffect(() => {
     navigation.setOptions({
       title: marker ? marker.title : "Details",
@@ -57,36 +84,7 @@ export default function DetailsScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.video_container}>
-        <Video
-          ref={video}
-          style={styles.video}
-          source={{
-            uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-          }}
-          useNativeControls
-          resizeMode="contain"
-          isLooping
-          onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-        />
-      </View>
-      <View style={styles.text}>
-        <View style={{ flexDirection: "row" }}>
-          <Image source={require("../assets/blue-bar.png")} />
-          <Text
-            style={{
-              fontFamily: "Gilroy",
-              color: "#36489E",
-              textAlign: "justify",
-              marginStart: 10,
-              marginEnd: 20,
-              fontSize: 15,
-            }}
-          >
-            {marker.descriptions[0].text}
-          </Text>
-        </View>
-      </View>
+      <Swiper marker={marker} />
       <View style={{ justifyContent: "center", alignContent: "center" }}>
         <View style={styles.buttonsBelow}>
           <TouchableOpacity
