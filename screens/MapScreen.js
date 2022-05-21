@@ -4,6 +4,7 @@ import MapView from "react-native-maps";
 import * as Localization from "expo-location";
 import i18n from "i18n-js";
 import languages from "../data/locales";
+import markers from "../data/markers";
 import * as Location from "expo-location";
 
 export default function MapScreen({ navigation }) {
@@ -37,9 +38,18 @@ export default function MapScreen({ navigation }) {
       initialRegion={{
         latitude: location ? location.coords.latitude : 0,
         longitude: location ? location.coords.longitude : 0,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
       }}
-    />
+    >
+      {markers.map((marker) => (
+        <MapView.Marker
+          key={marker.index}
+          coordinate={marker.coordinate}
+          title={marker.title}
+          description={marker.description}
+        />
+      ))}
+    </MapView>
   );
 }

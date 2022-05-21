@@ -6,6 +6,8 @@ import DetailsScreen from "./screens/DetailsScreen";
 import useFonts from "./assets/fonts/useFonts";
 import AppLoading from "expo-app-loading";
 import MapScreen from "./screens/MapScreen";
+import { Image, TouchableOpacity } from "react-native";
+import TestScreen from "./screens/TestScreen";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -29,6 +31,13 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
+          name="Test"
+          component={TestScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="Home"
           component={HomeScreen}
           options={{
@@ -40,6 +49,7 @@ export default function App() {
           component={DetailsScreen}
           options={{
             headerTitleAlign: "center",
+            headerBackVisible: false,
             headerStyle: {
               backgroundColor: "#fff",
               textAlign: "center",
@@ -53,9 +63,17 @@ export default function App() {
         <Stack.Screen
           name="Map"
           component={MapScreen}
-          options={{
+          options={({ navigation, route }) => ({
             title: "Tour Map",
             headerTitleAlign: "center",
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                <Image
+                  style={{ width: 30, height: 30 }}
+                  source={require("./assets/home.png")}
+                />
+              </TouchableOpacity>
+            ),
             headerStyle: {
               backgroundColor: "#fff",
               textAlign: "center",
@@ -64,7 +82,7 @@ export default function App() {
                 fontSize: 20,
               },
             },
-          }}
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>

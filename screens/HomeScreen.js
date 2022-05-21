@@ -94,7 +94,8 @@ export default function HomeScreen({ navigation }) {
         style={styles.button}
         onPress={() =>
           navigation.navigate("Details", {
-            location: location,
+            locale: locale,
+            marker: markers[0],
           })
         }
       >
@@ -118,7 +119,6 @@ export default function HomeScreen({ navigation }) {
             key={marker.index}
             coordinate={marker.coordinate}
             title={marker.title}
-            description={marker.description}
           >
             <Callout
               onPress={() =>
