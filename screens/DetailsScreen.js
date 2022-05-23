@@ -2,18 +2,19 @@ import * as React from "react";
 import {
   View,
   StyleSheet,
-  Button,
   Dimensions,
-  Text,
   Image,
   TouchableOpacity,
+  Platform,
 } from "react-native";
-import { Video, Audio } from "expo-av";
 import markers from "../data/markers";
 import MapView from "react-native-maps";
 import Swiper from "../components/Swiper";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 export default function DetailsScreen({ navigation, route }) {
-  const video = React.useRef(null);
   const { locale, marker } = route.params;
 
   const onButtonTouch = (type) => {
@@ -38,32 +39,6 @@ export default function DetailsScreen({ navigation, route }) {
     }
   };
 
-  const [sound, setSound] = React.useState();
-
-  async function playSound() {
-    console.log("Loading Sound");
-    const { sound } = await Audio.Sound.createAsync(
-      marker.descriptions[0].audio
-    );
-    setSound(sound);
-
-    console.log("Playing Sound");
-    await sound.playAsync();
-  }
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={playSound}>
-          <Image
-            source={require("../assets/audio_icon.png")}
-            style={{ marginLeft: 10, width: 40, height: 40 }}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
-
   React.useEffect(() => {
     navigation.setOptions({
       title: marker ? marker.title : "Details",
@@ -75,17 +50,18 @@ export default function DetailsScreen({ navigation, route }) {
     });
   }, [navigation, marker]);
 
-  const [status, setStatus] = React.useState({
-    currentTime: 0,
-    duration: 0,
-    isPlaying: true,
-    isBuffering: false,
-  });
-
   return (
     <View style={styles.container}>
       <Swiper marker={marker} />
-      <View style={{ justifyContent: "center", alignContent: "center" }}>
+      <View
+        style={{
+          justifyContent: "center",
+          backgroundColor: "white",
+          alignContent: "center",
+          width: Dimensions.get("window").width,
+          height: hp("30%"),
+        }}
+      >
         <View style={styles.buttonsBelow}>
           <TouchableOpacity
             style={{ marginStart: "15%" }}
@@ -118,10 +94,11 @@ export default function DetailsScreen({ navigation, route }) {
             alignContent: "center",
             alignItems: "center",
             alignSelf: "center",
-            margin: 10,
+            margin: wp("10%"),
+            marginBottom: Platform.OS == "android" ? 5 : 35,
             borderWidth: 1,
             overflow: "hidden",
-            marginTop: "3%",
+            marginTop: "2%",
             width: "70%",
             borderRadius: 10,
             borderColor: "#FF5757",
@@ -166,25 +143,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  video_container: {
-    width: Dimensions.get("window").width,
-    height: "40%",
-  },
-  video: {
-    width: Dimensions.get("window").width,
-    height: "100%",
-  },
-  text: {
-    marginTop: "10%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginStart: 20,
-    width: Dimensions.get("window").width - 20,
-  },
   buttonsBelow: {
     flexDirection: "row",
+    marginTop: hp("2%"),
     justifyContent: "space-between",
-    marginBottom: "3%",
+    marginBottom: 15,
   },
   buttons: {
     flexDirection: "row",

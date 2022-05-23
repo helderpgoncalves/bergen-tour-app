@@ -1,28 +1,30 @@
 import React from "react";
-import { Text, View, Image, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import Swiper from "react-native-swiper";
-import { Video } from "expo-av";
+import { Video, Audio } from "expo-av";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 var styles = {
   wrapper: {
-    backgroundColor: "#fff",
-  },
-  slide: {
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  text: {
-    color: "#000",
-    fontSize: 30,
-    fontWeight: "bold",
+    backgroundColor: "white",
   },
   video_container: {
     width: Dimensions.get("window").width,
-    height: "40%",
+    backgroundColor: "white",
+    height: hp("30%"), // 70% of height device screen
   },
   video: {
+    backgroundColor: "white",
     width: Dimensions.get("window").width,
     height: "100%",
   },
@@ -30,6 +32,8 @@ var styles = {
 
 export default ({ marker }) => {
   const video = React.useRef(null);
+  const [sound, setSound] = React.useState();
+
   const [status, setStatus] = React.useState({
     currentTime: 0,
     duration: 0,
@@ -37,19 +41,37 @@ export default ({ marker }) => {
     isBuffering: false,
   });
 
+  async function playSound(audio) {
+    const sound = new Audio.Sound();
+    try {
+      await sound.loadAsync(audio);
+      await sound.playAsync();
+      // Your sound is playing!
+      console.log("Sound is Playing");
+
+      // Don't forget to unload the sound from memory
+      // when you are done using the Sound object
+      await sound.unloadAsync();
+    } catch (error) {
+      // An error occurred!
+      console.log(error);
+    }
+  }
+
   return (
     <Swiper
       style={styles.wrapper}
       activeDotColor="#FF5757"
       paginationStyle={{
-        bottom: "41%",
+        bottom: hp("23%"),
+        marginBottom: 20,
       }}
       index={0}
       loop={false}
     >
       {marker.descriptions.map((item, index) => {
         return (
-          <View testID={index.toString()} style={styles.slide}>
+          <View testID={index.toString()}>
             <View style={styles.video_container}>
               <Video
                 ref={video}
@@ -63,21 +85,37 @@ export default ({ marker }) => {
                 onPlaybackStatusUpdate={(status) => setStatus(() => status)}
               />
             </View>
-            <View style={{ marginTop: "10%", marginStart: "5%" }}>
-              <View style={{ flexDirection: "row" }}>
+            <View
+              style={{
+                marginTop: "10%",
+                marginStart: wp("5%"),
+                width: Dimensions.get("window").width,
+                height: hp("30%"),
+              }}
+            >
+              <View style={{ flexDirection: "row", marginTop: 5 }}>
                 <Image source={require("../assets/blue-bar.png")} />
-                <Text
-                  style={{
-                    fontFamily: "Gilroy",
-                    color: "#36489E",
-                    textAlign: "justify",
-                    marginStart: 10,
-                    marginEnd: 20,
-                    fontSize: 15,
-                  }}
-                >
-                  {item.text}
-                </Text>
+                <View style={{ marginStart: 10, marginEnd: wp("10%") }}>
+                  <Text
+                    style={{
+                      fontFamily: "Gilroy",
+                      color: "#36489E",
+                      textAlign: "justify",
+                      fontSize: 15,
+                    }}
+                  >
+                    {item.text}
+                  </Text>
+                  <TouchableOpacity
+                    style={{ marginTop: 5 }}
+                    onPress={() => playSound(item.audio)}
+                  >
+                    <Image
+                      source={require("../assets/audio_icon.png")}
+                      style={{ width: 41, height: 41 }}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
