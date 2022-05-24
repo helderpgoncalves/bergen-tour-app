@@ -63,8 +63,7 @@ export default ({ marker }) => {
       style={styles.wrapper}
       activeDotColor="#FF5757"
       paginationStyle={{
-        bottom: hp("23%"),
-        marginBottom: 20,
+        bottom: hp("24%"),
       }}
       index={0}
       loop={false}
@@ -87,7 +86,7 @@ export default ({ marker }) => {
             </View>
             <View
               style={{
-                marginTop: "10%",
+                marginTop: "13%",
                 marginStart: wp("5%"),
                 width: Dimensions.get("window").width,
                 height: hp("30%"),
